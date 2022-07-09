@@ -23,7 +23,6 @@ def init(token_contract: str = 'con_blubber_contract'):
 
     settings[STAKING_LOCKUP_DAYS_STR] = 21
     total_staked.set(0)
-    contracts_list.set([])
 
     proposal_id.set(0)
     settings[MINIMUM_PROPOSAL_DURATION_STR] = 7 #Number is in days
