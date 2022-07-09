@@ -7,7 +7,6 @@ stakes = Hash(default_value=0)
 total_staked = Variable()
 
 
-# DAO
 proposal_id = Variable()
 finished_proposals = Hash()
 sig = Hash(default_value=False)
@@ -18,7 +17,7 @@ status = Hash()
 
 
 @construct
-def init(token_contract: str = 'con_phi_lst001'):
+def init(token_contract: str = 'con_blubber_contract'):
     settings[OWNER_STR] = ctx.caller
     settings[TOKEN_CONTRACT_STR] = token_contract
 
@@ -26,7 +25,6 @@ def init(token_contract: str = 'con_phi_lst001'):
     total_staked.set(0)
     contracts_list.set([])
 
-    # DAO
     proposal_id.set(0)
     settings[MINIMUM_PROPOSAL_DURATION_STR] = 7 #Number is in days
     settings[REQUIRED_APPROVAL_PERCENTAGE_STR] = 0.5 #Keep this at 50%, unless there are special circumstances
@@ -60,12 +58,10 @@ def stake(amount: float):
 
 
 @export
-def create_basic_proposal(action: str, contract: str, voting_time_in_days: int, description: str): 
+def create_basic_proposal(voting_time_in_days: int, description: str): 
     assert voting_time_in_days >= settings[MINIMUM_PROPOSAL_DURATION_STR]
     p_id = proposal_id.get()
     proposal_id.set(p_id + 1)
-    proposal_details[p_id, "action"] = action
-    proposal_details[p_id, "contract"] = contract
     proposal_details[p_id, "type"] = "basic"
     modify_proposal(p_id, description, voting_time_in_days)
     return p_id
