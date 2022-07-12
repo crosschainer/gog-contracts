@@ -13,6 +13,12 @@ sig = Hash(default_value=False)
 proposal_details = Hash()
 status = Hash()
 
+TOKEN_CONTRACT_STR = 'token'
+OWNER_STR = 'owner'
+MINIMUM_PROPOSAL_DURATION_STR = 'min_proposal_duration'
+REQUIRED_APPROVAL_PERCENTAGE_STR = 'required_approval_percentage'
+MINIMUM_QUORUM_STR = 'min_quorum'
+STAKING_LOCKUP_DAYS_STR = 'stake_lockup
 
 
 
