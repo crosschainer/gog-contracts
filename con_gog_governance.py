@@ -40,26 +40,31 @@ def init(token_contract: str = 'con_blubber_contract'):
 def stake(amount: float):
     assert amount >= 0, 'Must be non-negative.'
     current_amount = stakes[ctx.caller] or 0
-    if current_amount > amount:
-        # unstake
-        assert (stakes[ctx.caller, 'time'] + datetime.timedelta(days=1) * (settings[STAKING_LOCKUP_DAYS_STR])) <= now, "Cannot unstake yet!"
-        amount_to_unstake = current_amount - amount
-        I.import_module(settings[TOKEN_CONTRACT_STR]).transfer(
-            to=ctx.caller,
-            amount=amount_to_unstake
-        )
-        total_staked.set(total_staked.get() - amount_to_unstake)
-    elif current_amount < amount:
-        # stake
-        amount_to_stake = amount - current_amount
-        I.import_module(settings[TOKEN_CONTRACT_STR]).transfer_from(
-            to=ctx.this,
-            amount=amount_to_stake,
-            main_account=ctx.caller
-        )
-        stakes[ctx.caller, 'time'] = now
-        total_staked.set(total_staked.get() + amount_to_stake)
-    stakes[ctx.caller] = amount
+    amount_to_stake = current_amount + amount
+    I.import_module(settings[TOKEN_CONTRACT_STR]).transfer_from(
+        to=ctx.this,
+        amount=amount_to_stake,
+        main_account=ctx.caller
+    )
+    stakes[ctx.caller, 'time'] = now
+    total_staked.set(total_staked.get() + amount_to_stake)
+    stakes[ctx.caller] = amount_to_stake
+    
+    
+@export
+def unstake(amount: float):
+    assert amount >= 0, 'Must be non-negative.'
+    current_amount = stakes[ctx.caller] or 0
+    assert current_amount >= amount, 'You do not have that much staked'
+    # unstake
+    assert (stakes[ctx.caller, 'time'] + datetime.timedelta(days=1) * (settings[STAKING_LOCKUP_DAYS_STR])) <= now, "Cannot unstake yet!"
+    
+    I.import_module(settings[TOKEN_CONTRACT_STR]).transfer(
+        to=ctx.caller,
+        amount=amount
+    )
+    total_staked.set(total_staked.get() - amount)
+    stakes[ctx.caller] = current_amount - amount
 
 
 @export
